@@ -1,8 +1,8 @@
 ==========
 Vala CMake
 ==========
-:Author: 
-    Jakob Westhoff
+:Authors: 
+    Jakob Westhoff, Daniel Pfeifer, Robert Crowther
 :Version:
     Draft
 
@@ -141,33 +141,24 @@ CMake to create an executable out of it.
 Further reading
 ===============
 
-The `Pdf Presenter Console`__ , which is a vala based project of mine, makes
-heavy usage of the here described macros.  To look at a real world example of
-these macros the mentioned project is the right place to take a look. The svn
-trunk of it can be found at::
+CMake Vala by Jakob Westhoff
+https://github.com/jakobwesthoff/Vala_CMake
 
-	svn://pureenergy.cc/pdf_presenter_console/trunk
+Jakob Westhoff's `Pdf Presenter Console` example,
+http://westhoffswelt.de/projects/pdf_presenter_console.html
+
+CMake Vala by pjanouch,
+https://github.com/pjanouch/slovnik-gui
 
 
-__ http://westhoffswelt.de/projects/pdf_presenter_console.html
 
 
 Acknowledgments
 ===============
 
-Thanks go out to Florian Sowade, a fellow local PHP-Usergroupie, who helped me
-a lot with the initial version of this macros and always answered my mostly
-dumb CMake questions.
+Thanks to Jakob Westhoff and Daniel Pfeifer, for the code.
 
 .. _CMake: http://cmake.org
 .. _Vala: http://live.gnome.org/Vala
 .. _Genie: http://live.gnome.org/Genie
 
-
-
-..
-   Local Variables:
-   mode: rst
-   fill-column: 79
-   End: 
-   vim: et syn=rst tw=79
