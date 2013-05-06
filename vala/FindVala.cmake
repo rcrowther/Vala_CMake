@@ -10,6 +10,8 @@
 # This module supports versioning. It tests the found executable, and also
 # searched for executables with versioned names.
 #
+# This module also adds some compiler flag variables.
+#
 # Usage:
 #  find_package(Vala [version] [EXACT] [REQUIRED] [QUIET])
 #
@@ -21,6 +23,10 @@
 #  VALA_VERSION_MAJOR       - valac major version found e.g. 0
 #  VALA_VERSION_MINOR       - valac minor version found e.g. 18
 #  VALA_VERSION_PATCH       - valac patch version found e.g. 0
+#
+# Also defines some compiler flag vartiables. These are for a vala precompile
+# and mimic CMAKE_C_FLAGS_DEBUG etc. The most interesting is for a new
+# configuration, VALAPRECOMPILE.
 #
 #
 # Examples:
@@ -99,7 +105,43 @@ cmake_policy(VERSION 2.8)
 # set(_Vala_DEBUG True)
 
 
+# Set some flags
+# CMake usually does this during compiler detection. Our extensions are here
+# for now. Should they get extensive, due to compilers or platform, this will
+# need to be reconsidered.
+# The FAQ is about overriding, I dont think we should FORCE R.C.
+# http://www.cmake.org/Wiki/CMake_FAQ
+#TODO: Do we need -g on RELWITHDEBINFO and MINSIZEREL?
+set(CMAKE_VALA_FLAGS ""
+  CACHE STRING "Flags used by valac during all build types."
+  )
+set(CMAKE_VALA_FLAGS_DEBUG "-g --save-temps"
+  CACHE STRING "Flags used by valac during debug builds."
+  )
+set(CMAKE_VALA_RELEASE ""
+  CACHE STRING "Flags used by valac during release builds."
+  )
+set(CMAKE_VALA_FLAGS_RELWITHDEBINFO ""
+  CACHE STRING "Flags used by valac during Release with Debug Info builds."
+  )
+set(CMAKE_VALA_FLAGS_MINSIZEREL ""
+  CACHE STRING "Flags used by valac during release minsize builds."
+  )
 
+# The configuration "precompile" should never reach a compiler
+set(CMAKE_VALA_FLAGS_VALAPRECOMPILE "--save-temps"
+  CACHE STRING "Flags used by valac during Vala Precompilation only builds." 
+  )
+
+
+mark_as_advanced(
+CMAKE_VALA_FLAGS
+CMAKE_VALA_FLAGS_DEBUG
+CMAKE_VALA_RELEASE
+CMAKE_VALA_FLAGS_RELWITHDEBINFO
+CMAKE_VALA_FLAGS_MINSIZEREL
+CMAKE_VALA_FLAGS_VALAPRECOMPILE
+  )
 
 # Search for a generic valac executable in the usual system paths.
 find_program(VALA_EXECUTABLE valac)
