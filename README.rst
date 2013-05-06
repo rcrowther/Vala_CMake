@@ -7,12 +7,22 @@ Vala CMake
     Draft
 
 
+About
+=====
+
+This code was originally a fork of Jakob Westhoff's CMake Vala code, as updated by Daniel Pfeifer. It is now a stand-alone project. See also the fork-within-a-project by pjanouch.
+
+Please note that these modules have only been tested on apt-get packaged operating systems.
+
+
+
 Overview
 ========
 
-Vala CMake is a collection of macros for the CMake_ build system to allow the
+Vala CMake is a collection of macros for the CMake_ build system handling the
 creation and management of projects developed using the Vala_ programming
-language or its "Genie" flavor (less tested).
+language or it's "Genie" flavor (untested).
+
 
 
 Installation
@@ -38,11 +48,11 @@ Finding Vala
 
 The find module for vala works like any other Find module in CMake.
 You can use it by simply calling the usual ``find_package`` function. Default
-parameters like ``REQUIRED`` and ``QUIETLY`` are supported.
+parameters like ``REQUIRED`` and ``QUIETLY`` are supported, as are version arguments and ``EXACT``.
 
 ::
 
-    find_package(Vala REQUIRED)
+    find_package(Vala 0.16 REQUIRED)
 
 After a successful call to the find_package function the following variables 
 will be set:
@@ -51,10 +61,12 @@ VALA_FOUND
     Whether the vala compiler has been found or not
 
 VALA_EXECUTABLE
-    Full path to the valac executable if it has been found
+    Full path to the valac executable. if it has been found
 
-VALA_VERSION
-    Version number of the available valac
+VALA_VERSION_STRING
+    Version number as a string of the available valac
+
+...and some mainly internal variables.
 
 
 Precompiling Vala sources
@@ -142,13 +154,13 @@ Further reading
 ===============
 
 CMake Vala by Jakob Westhoff
-https://github.com/jakobwesthoff/Vala_CMake
+  https://github.com/jakobwesthoff/Vala_CMake
 
 Jakob Westhoff's `Pdf Presenter Console` example,
-http://westhoffswelt.de/projects/pdf_presenter_console.html
+  http://westhoffswelt.de/projects/pdf_presenter_console.html
 
 CMake Vala by pjanouch,
-https://github.com/pjanouch/slovnik-gui
+  https://github.com/pjanouch/slovnik-gui
 
 
 
