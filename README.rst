@@ -276,7 +276,6 @@ Acknowledgments
 
 Thanks to Jakob Westhoff and Daniel Pfeifer, for the code.
 
-Robert Crowther would like to thank the Vala IRC channel for tolerant amusement in the presence of the spectacularly haphazard.
 
 .. _CMake: http://cmake.org
 .. _Vala: http://live.gnome.org/Vala
