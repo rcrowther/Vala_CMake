@@ -99,7 +99,7 @@
 #       this list of conditions and the following disclaimer in the documentation
 #       and/or other materials provided with the distribution.
 # 
-# THIS SOFTWARE IS PROVIDED BY JAKOB WESTHOFF ``AS IS'' AND ANY EXPRESS OR
+# THIS SOFTWARE IS PROVIDED BY ROBERT CROWTHER ``AS IS'' AND ANY EXPRESS OR
 # IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
 # MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
 # EVENT SHALL JAKOB WESTHOFF OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
@@ -152,6 +152,7 @@ function(_vala_generic_vapidir _ok _group_id _required _silent)
       )
     if(NOT _silent)
       message(STATUS "Found Vala binding path (generic): ${${_group_id}_GENERIC_DIR}")
+      mark_as_advanced(${_group_id}_GENERIC_DIR)
     endif()
   else()
     if(_required)
@@ -212,11 +213,12 @@ function(_vala_versioned_vapidir _ok _group_id _required _silent)
         ${_found_path}
         CACHE
         FILEPATH
-        "Vala .vapi path with versioned element"
+        "Versioned path to .vapi files"
         )
       if(NOT _silent)
         message(STATUS "Found Vala binding path (versioned): ${${_group_id}_VERSIONED_DIR}")
       endif()
+      mark_as_advanced(${_group_id}_VERSIONED_DIR)
     else()
       if(_required)
         message(SEND_ERROR "Vala binding directory of version '${_versioned_path_element}' requested, but not found")
@@ -252,6 +254,7 @@ function(_vala_custom_vapidirs _ok _group_id _required _silent)
       if(NOT _silent)
         message(STATUS "Found Vala binding path (custom): ${_custom_vapipath}")
       endif()
+      mark_as_advanced(${_group_id}_CUSTOM_DIR_${_custom_vapi_count})
       math(EXPR _custom_vapi_count "${_custom_vapi_count} + 1")
     else()
       if(_required)
@@ -314,7 +317,6 @@ macro(vala_find_binding_locations _group_id)
 
   if (_Vala_Binding_Locations_DEBUG)
     message(STATUS "--------FindValaBindingLocations.cmake debug------------")
-    message(STATUS "vala_bindings_location_required_ok: ${vala_bindings_location_required_ok}")
     message(STATUS "${_group_id}_GENERIC_DIR: ${${_group_id}_GENERIC_DIR}")
     message(STATUS "${_group_id}_VERSIONED_DIR: ${${_group_id}_VERSIONED_DIR}")
     message(STATUS "${_group_id}_CUSTOM_DIR_1: ${${_group_id}_CUSTOM_DIR_1}")
@@ -324,14 +326,6 @@ macro(vala_find_binding_locations _group_id)
     message(STATUS "${_group_id}_LOCATIONS_FOUND: ${${_group_id}_LOCATIONS_FOUND}")
     message(STATUS "--------------------")
   endif()
+
 endmacro()
 
-
-mark_as_advanced(
-  VALA_BINDINGS_GENERIC_DIR
-  VALA_BINDINGS_VERSIONED_DIR
-  VALA_BINDINGS_CUSTOM_DIR_1
-  VALA_BINDINGS_CUSTOM_DIR_2
-  VALA_BINDINGS_CUSTOM_DIR_3
-  VALA_BINDINGS_CUSTOM_DIR_4
-  )
