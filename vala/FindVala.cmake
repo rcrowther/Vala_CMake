@@ -10,7 +10,8 @@
 # This module supports versioning. It tests the found executable, and also
 # searched for executables with versioned names.
 #
-# This module also adds some compiler flag variables.
+# This module also adds some valac flag code. This is unused in the module,
+# though will appear in cmake cache.
 #
 # Usage:
 #  find_package(Vala [version] [EXACT] [REQUIRED] [QUIET])
@@ -24,9 +25,8 @@
 #  VALA_VERSION_MINOR       - valac minor version found e.g. 18
 #  VALA_VERSION_PATCH       - valac patch version found e.g. 0
 #
-# Also defines some compiler flag vartiables. These are for a vala precompile
-# and mimic CMAKE_C_FLAGS_DEBUG etc. The most interesting is for a new
-# configuration, VALAPRECOMPILE.
+# Also defines some compiler flag variables. These are for a vala precompile
+# and mimic CMAKE_C_FLAGS_DEBUG etc.
 #
 #
 # Examples:
@@ -92,56 +92,90 @@
 
 # TODO: See FindPerl for Cygwin install
 # TODO: See FindRuby for native Win type installs.
-# TODO: Um, vala_FIND_QUIETLY vala_REQUIRED is builtin?
 # TODO: Handle debug, add EXTENDED_SEARCH
 
-### Common stuff ####
+### Common ####
 set(VALA_VERSION 1)
 
-# Set the policy for if...then. Wez uses a lot of if..thens.
+# Set the policy for if...then. We use a lot of if..thens.
 cmake_policy(VERSION 2.8)
 
 # uncomment the following line to get debug output for this file
 # set(_Vala_DEBUG True)
 
 
-# Set some flags
-# CMake usually does this during compiler detection. Our extensions are here
-# for now. Should they get extensive, due to compilers or platform, this will
+# --------------------------------------------
+# Variables and macros for build configuration
+# --------------------------------------------
+# Opportunistic but, hey. Placed here they can be used after the user has
+# first mentioned Vala.
+# CMake usually does this during compiler detection? Which is later, but we
+# don't have the advantages of builtin code. And I don't see another way of
+# doing this (autoloading a Vala initial config)?
+# Should this get extensive, due to compilers or platform, code position may
 # need to be reconsidered.
-# The FAQ is about overriding, I dont think we should FORCE R.C.
+
+
+# CMake does something in the generator, called flags.
+# There is no generator here, so this.
+
+
+# Set some flags
+# The FAQ is about overriding, I do not think we should FORCE R.C.
 # http://www.cmake.org/Wiki/CMake_FAQ
 #TODO: Do we need -g on RELWITHDEBINFO and MINSIZEREL?
+#TODO: If Make, no? See CMakeCInformation...
+#if(NOT CMAKE_NOT_USING_CONFIG_FLAGS)...
 set(CMAKE_VALA_FLAGS ""
   CACHE STRING "Flags used by valac during all build types."
   )
 set(CMAKE_VALA_FLAGS_DEBUG "-g --save-temps"
-  CACHE STRING "Flags used by valac during debug builds."
+  CACHE STRING "Flags used by valac during Debug builds."
   )
 set(CMAKE_VALA_RELEASE ""
-  CACHE STRING "Flags used by valac during release builds."
+  CACHE STRING "Flags used by valac during Release builds."
   )
 set(CMAKE_VALA_FLAGS_RELWITHDEBINFO ""
   CACHE STRING "Flags used by valac during Release with Debug Info builds."
   )
 set(CMAKE_VALA_FLAGS_MINSIZEREL ""
-  CACHE STRING "Flags used by valac during release minsize builds."
+  CACHE STRING "Flags used by valac during Release Minsize builds."
   )
 
-# The configuration "precompile" should never reach a compiler
-set(CMAKE_VALA_FLAGS_VALAPRECOMPILE "--save-temps"
-  CACHE STRING "Flags used by valac during Vala Precompilation only builds." 
-  )
+set(_VALA_PRECOMPILER_FLAGS ${CMAKE_VALA_FLAGS})
 
+
+# - Add definitions to the macro precompiler line
+#
+#  vala_precompile_add_definitions("--disable-assert" ...)
+#
+# Adds flags to the Vala precompiler command line. Works script-wide, as the
+# precompiler is intended to be called once only.
+# 
+# Works as the cmake add_definitions() macro, which adds definitions to a
+# target. However, the function vala_precompile output() is this
+# function's 'target', and is known. So invokations of this macro should be
+# run *before* an invokation of vala_precompile output().
+macro(vala_precompile_add_definitions)
+  if(${ARGC} GREATER 0)
+   #list(APPEND VALA_PRECOMPILER_OPTIONS ${ARGV})
+   list(APPEND _VALA_PRECOMPILER_FLAGS ${ARGV})
+  endif() 
+endmacro()
 
 mark_as_advanced(
-CMAKE_VALA_FLAGS
-CMAKE_VALA_FLAGS_DEBUG
-CMAKE_VALA_RELEASE
-CMAKE_VALA_FLAGS_RELWITHDEBINFO
-CMAKE_VALA_FLAGS_MINSIZEREL
-CMAKE_VALA_FLAGS_VALAPRECOMPILE
+  CMAKE_VALA_FLAGS
+  CMAKE_VALA_FLAGS_DEBUG
+  CMAKE_VALA_RELEASE
+  CMAKE_VALA_FLAGS_RELWITHDEBINFO
+  CMAKE_VALA_FLAGS_MINSIZEREL
   )
+
+
+
+# --------
+# FindVala
+# --------
 
 # Search for a generic valac executable in the usual system paths.
 find_program(VALA_EXECUTABLE valac)
@@ -166,25 +200,21 @@ if(
   AND (Vala_FIND_VERSION AND Vala_FIND_VERSION_MAJOR AND Vala_FIND_VERSION_MINOR)
   )
 
-
   # If extending the search, the generic executable failed (even if on
   # versioning only), so ensure these are unset.
   unset(VALA_EXECUTABLE CACHE)
   unset(VALA_VERSION_STRING)
 
-
-
   # If the user has specified a path, add extra executable names
   # TODO: extend for other architecture/OS cases.
-
   # This works for apt-get
   set(_vala_versioned_executable_name "valac-${Vala_FIND_VERSION_MAJOR}.${Vala_FIND_VERSION_MINOR}")
-
 
 
   if(DEFINED _Vala_DEBUG)
     message(STATUS "Generic executable find failed, seeking alternative executable: ${_vala_versioned_executable_name}")
   endif()
+
 
   find_program(VALA_EXECUTABLE ${_vala_versioned_executable_name})
 
