@@ -257,6 +257,41 @@ file names after the call. This information can be used to create an executable,
     add_executable(myexecutable ${VALA_C})
 
 
+Valadoc
+=======
+
+Oh yeah(!) Valadoc depends on bindings, so this depends on the FindValaBindings macro (so every other module in this package).
+
+The macro ``add_valadoc_target`` adds a custonm target to the build code.
+
+The following sections may be specified to provide options to valadoc:
+
+OUTPUT_DIRECTORY
+  Name an output directiory. Relative to the source root. Defaults to 'doc',
+  resulting in <source_root>/doc/doc
+
+TARGET_NAME
+  Name of the target to be formed. Defaults to 'doc'.
+
+FLAGS
+  Add flags to the valadoc call. Valadoc uses slghtly different flags to
+  valac, so they must be explicity set. 
+
+an example of a call,
+
+  include(UseValadoc)
+  add_valadoc_target(BINDINGS1)
+
+run,
+
+  cmake --build --target doc
+
+For full insight.
+
+(The macro includes a call to a macro called ``FindValadoc``. This macro can be used alone, but maybe not to much purpose)
+
+
+
 Further reading
 ===============
 
