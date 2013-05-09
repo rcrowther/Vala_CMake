@@ -78,7 +78,7 @@ include(CMakeParseArguments)
 set(VALADOC_VERSION 1)
 
 # uncomment the following line to get debug output for this file
-# set(_Valadoc_DEBUG True)
+ set(_Valadoc_DEBUG True)
 
 # Find valadoc
 find_package(Valadoc REQUIRED)
@@ -113,7 +113,7 @@ function(add_valadoc_target _group_id)
 
   if(_Valadoc_DEBUG)
     message(STATUS "--------UseValadoc.cmake debug------------")
-    message(STATUS "COMMAND: ${VALADOC_EXECUTABLE} --force -D ${GTK_VERSION_SYMBOL} --enable-experimental -b ${CMAKE_CURRENT_SOURCE_DIR} --directory ${CMAKE_CURRENT_SOURCE_DIR}/doc" --vapidir=${VALA_BINDINGS_VERSIONED_DIR} ${VALA_BINDINGS_GENERIC_DIR}${BINDINGS1_VALA_BINDINGS_CFLAGS})
+    message(STATUS "COMMAND: ${VALADOC_EXECUTABLE} --force ${ARGS_FLAGS} -b ${CMAKE_CURRENT_SOURCE_DIR} --directory ${CMAKE_CURRENT_SOURCE_DIR}/${_output_directory} --vapidir=${VALA_BINDINGS_VERSIONED_DIR} ${VALA_BINDINGS_GENERIC_DIR} ${${_group_id}_VALA_BINDINGS_CFLAGS} <some Vala sources...>")
     message(STATUS "--------------------")
   endif()
 
