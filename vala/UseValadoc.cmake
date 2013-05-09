@@ -103,9 +103,25 @@ function(add_valadoc_target _group_id)
     set(_output_directory "doc")
   endif()
 
+
+  # Collect the binding paths
+  list(APPEND _binding_directories
+    ${${_group_id}_GENERIC_DIR}
+    ${${_group_id}_VERSIONED_DIR}
+    ${${_group_id}_CUSTOM_DIR_1}
+    ${${_group_id}_CUSTOM_DIR_2}
+    ${${_group_id}_CUSTOM_DIR_3}
+    ${${_group_id}_CUSTOM_DIR_4}
+    )
+
+  foreach(_dir ${_binding_directories})
+    list(APPEND _vapi_arguments "--vapidir=${_dir}")
+  endforeach()
+
+
   add_custom_target(${_target_name}
     COMMAND
-      ${VALADOC_EXECUTABLE} --force ${ARGS_FLAGS} -b ${CMAKE_CURRENT_SOURCE_DIR} --directory ${CMAKE_CURRENT_SOURCE_DIR}/${_output_directory}  --vapidir=${VALA_BINDINGS_VERSIONED_DIR} ${VALA_BINDINGS_GENERIC_DIR} ${${_group_id}_VALA_BINDINGS_CFLAGS}  ${VALA_SRCS}
+      ${VALADOC_EXECUTABLE} --force ${ARGS_FLAGS} -b ${CMAKE_CURRENT_SOURCE_DIR} --directory ${CMAKE_CURRENT_SOURCE_DIR}/${_output_directory} ${_vapi_arguments} ${${_group_id}_VALA_BINDINGS_CFLAGS}  ${VALA_SRCS}
     COMMENT
       "building documentation..."
     VERBATIM
@@ -113,7 +129,7 @@ function(add_valadoc_target _group_id)
 
   if(_Valadoc_DEBUG)
     message(STATUS "--------UseValadoc.cmake debug------------")
-    message(STATUS "COMMAND: ${VALADOC_EXECUTABLE} --force ${ARGS_FLAGS} -b ${CMAKE_CURRENT_SOURCE_DIR} --directory ${CMAKE_CURRENT_SOURCE_DIR}/${_output_directory} --vapidir=${VALA_BINDINGS_VERSIONED_DIR} ${VALA_BINDINGS_GENERIC_DIR} ${${_group_id}_VALA_BINDINGS_CFLAGS} <some Vala sources...>")
+    message(STATUS "COMMAND: ${VALADOC_EXECUTABLE} --force ${ARGS_FLAGS} -b ${CMAKE_CURRENT_SOURCE_DIR} --directory ${CMAKE_CURRENT_SOURCE_DIR}/${_output_directory} ${_vapi_arguments} ${${_group_id}_VALA_BINDINGS_CFLAGS} <some Vala sources...>")
     message(STATUS "--------------------")
   endif()
 
