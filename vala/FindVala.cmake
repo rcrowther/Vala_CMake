@@ -124,11 +124,16 @@ cmake_policy(VERSION 2.8)
 # The FAQ is about overriding, I do not think we should FORCE R.C.
 # http://www.cmake.org/Wiki/CMake_FAQ
 #TODO: Do we need -g on RELWITHDEBINFO and MINSIZEREL?
+# Maybe. We need -g for debug for sure,
+# http://blogs.gnome.org/juergbi/2007/09/05/vala-and-nemiver/
+# Also interesting,
+# https://mail.gnome.org/archives/vala-list/2009-October/msg00084.html
 #TODO: If Make, no? See CMakeCInformation...
 #if(NOT CMAKE_NOT_USING_CONFIG_FLAGS)...
 set(CMAKE_VALA_FLAGS ""
   CACHE STRING "Flags used by valac during all build types."
   )
+#TODO: -X -O0 ?
 set(CMAKE_VALA_FLAGS_DEBUG "-g --save-temps"
   CACHE STRING "Flags used by valac during Debug builds."
   )
@@ -142,6 +147,7 @@ set(CMAKE_VALA_FLAGS_MINSIZEREL ""
   CACHE STRING "Flags used by valac during Release Minsize builds."
   )
 
+# Set the basic flags 
 set(_VALA_PRECOMPILER_FLAGS ${CMAKE_VALA_FLAGS})
 
 

@@ -26,18 +26,25 @@
 # generate the necessary directories in the build, so is a concise and safe
 # invokation (valac can segfualt if output directories are not present).
 #
-# The following sections may be specified afterwards to provide certain options
-# to the vala compiler:
+# Usage:
+#   vala_precompile output(<output varible> [REQUIRED] [QUIET] <binding name> [<binding name>]*)
 #
-# SOURCES
+#
+# Takes arguments:
+#
+#  A Group_Id. Group_Id's provide namespacing for binding sources. They are
+#  created by FindValaBindingLocation. See the documentaion for
+#  FindValaBindingLocation.
+#
+#  
 #   A list of .vala files to be compiled. Must be in full path form, not
 #   filenames.
 #
 # DIRECTORY
 #   Optionally specify an output directory for headers, vapis and c files. If
-#   this parameter is specified, it will become a subfolder of the current source
-#   directory. If unspecified, material output from valac is sent to the build
-#   folder.
+#   this parameter is specified, it will become a subfolder of the current
+#   source directory. If unspecified, material output from valac is sent to
+#   the build folder.
 #
 # CUSTOM_VAPIS
 #   A list of custom vapi files to be included for compilation. This can be
@@ -54,24 +61,14 @@
 #   be a header file as well as an internal header file being generated called
 #   <provided_name>.h and <provided_name>_internal.h
 #
-#  DEBUG
-#    Print debug information as the funtion is executed.
 #
-# The following call is a simple example to the vala_precompile() macro
-# showing an example to all the optional sections:
-#
-#   find_package(Vala "0.12" REQUIRED)
-#   inlcude(${VALA_USE_FILE})
-#
-#   vala_precompile_add_definitions("--thread")
-#   vala_precompile_add_definitions("--define=GTK2")
+# Example:
 #
 #   vala_precompile(VALA_C
-#     SOURCES
 #       source1.vala
 #       source2.vala
 #       source3.vala
-#     OUTPUT_DIRECTORY
+#     DIRECTORY
 #       gen
 #     CUSTOM_VAPIS
 #       some_vapi.vapi
@@ -126,7 +123,7 @@
 
 
 # TODO: Confirm GENERATE_HEADER;GENERATE_VAPI work
-
+# TODO: Function signature.
 
 include(CMakeParseArguments)
 cmake_policy(VERSION 2.8)
@@ -135,14 +132,14 @@ cmake_policy(VERSION 2.8)
 set(VALA_USE_VERSION 1)
 
 # uncomment the following line to get debug output for this file
-# set(_Vala_Use_DEBUG True)
+ set(_Vala_Use_DEBUG True)
 
 
 
 #---------------------
 # Setup Configurations
 #---------------------
-# CMake does this automatically using internal methods, but we're in the DSL
+# CMake does this using internal methods, but we're in the DSL
 
 
 # TODO:Gumph. Should only happen on Make type builders, etc.
@@ -182,7 +179,7 @@ function(vala_precompile output)
   cmake_parse_arguments(ARGS
     ""
     "DIRECTORY;GENERATE_HEADER;GENERATE_VAPI"
-    "SOURCES;CUSTOM_VAPIS"
+    "SOURCES"
     ${ARGN}
     )
 
@@ -203,16 +200,6 @@ function(vala_precompile output)
     list(APPEND out_files "${OUTPUT_DIRECTORY}/${src}")
   endforeach()
 
-  set(custom_vapi_arguments "")
-  if(ARGS_CUSTOM_VAPIS)
-    foreach(vapi ${ARGS_CUSTOM_VAPIS})
-      if(${vapi} MATCHES ${CMAKE_SOURCE_DIR} OR ${vapi} MATCHES ${CMAKE_BINARY_DIR})
-        list(APPEND custom_vapi_arguments ${vapi})
-      else()
-        list(APPEND custom_vapi_arguments ${CMAKE_CURRENT_SOURCE_DIR}/${vapi})
-      endif()
-    endforeach()
-  endif()
 
   set(vapi_arguments "")
   if(ARGS_GENERATE_VAPI)
@@ -236,7 +223,7 @@ function(vala_precompile output)
 
   if(_Vala_Use_DEBUG)
     message(STATUS "--------UseVala.cmake debug------------")
-    message(STATUS "Valac execute: ${VALA_EXECUTABLE} -C ${_VALA_PRECOMPILER_FLAGS} ${header_arguments} ${vapi_arguments} -b ${CMAKE_CURRENT_SOURCE_DIR} -d ${OUTPUT_DIRECTORY}  <some sources...>  ${custom_vapi_arguments}")
+    message(STATUS "Valac execute: ${VALA_EXECUTABLE} -C ${_VALA_PRECOMPILER_FLAGS} ${header_arguments} ${vapi_arguments} -b ${CMAKE_CURRENT_SOURCE_DIR} -d ${OUTPUT_DIRECTORY}  <some sources...>")
     message(STATUS "--------------------")
   endif()
 
@@ -244,6 +231,7 @@ function(vala_precompile output)
   # Note: the valac parameters -b and -d have a simple but effective action.
   # -b (basedirectory) is removed from source filepaths, then -d
   # (target directory) is appended to the remaining stub.
+#TODO: Remove custom vapis
   add_custom_command(OUTPUT ${out_files} 
     COMMAND 
       ${VALA_EXECUTABLE}
@@ -255,10 +243,9 @@ function(vala_precompile output)
       "-b" ${CMAKE_CURRENT_SOURCE_DIR} 
       "-d" ${OUTPUT_DIRECTORY}
       ${in_files}
-      ${custom_vapi_arguments}
     DEPENDS 
       ${in_files} 
-      ${ARGS_CUSTOM_VAPIS}
+      #${ARGS_CUSTOM_VAPIS}
     )
   set(${output} ${out_files} PARENT_SCOPE)
 

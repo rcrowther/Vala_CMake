@@ -11,20 +11,9 @@ TODO
 - the documentation ain't cmake
 - Parallel compilation, crosscheck,
 http://www.kitware.com/blog/home/post/434
-
+- Should UseVala depend on custom vapi lists?
 
 BACKBURNING
 - Wouldn't it be nice if Nemiver could be pre-allocated with Vala source locations (and maybe C files)?
 
-Yes, it would. Part of the problem, if it can be called that, is that the Vala crew implemented debugging to work partially in C, when Vala compiling was unclear. Now that is a solution, not a problem,
-https://mail.gnome.org/archives/vala-list/2009-October/msg00084.html
 
-The resulting situation is that gdb needs to know the locations of all the Vala files, *and* all the C files, so it can follow them all.
-
-That would be alright, if Nemiver, the key app here, could be preset to look at these files. First, see here for the Nemiver main developer's opinion on Vala.
-
-http://comments.gmane.org/gmane.comp.gnome.nemiver/18
-
-Not promising. Worse, Nemiver's oh-so-clean but gnomic code seems to suggest it's sessions are backed by gconf---through a baffling layer of c++ transaction and lock code. GConf is now superceeded by the dual layers of dconf and GSettings. The settings would be inpenetrable from CMake, which DSL at best can set an extra config file. Of course, loading initializing data from the commandline (from such a file) into whatever backend Nemiver used would be enough to start a Nemiver session. And an initializing session would be enough. But that still leaves us fighting with the antiquated gconf.
-
-If anyone knows enough about that, even to know it can't be done, do tell.

@@ -18,6 +18,8 @@ Compared to the modules linked above, this module has another basic step, extend
 
 If you wish to work on the code, the macros are (are intended to be...) formatted to current cmake requirements, and include `debug` options.
 
+CMake version XXX or greater required.
+
 Please note that these modules have only been tested on apt-get packaged operating systems.
 
 
@@ -47,6 +49,13 @@ Assuming the macros are stored under ``cmake/vala`` in your projects folder, add
 After the new module path as been added you can simply include() the provided
 modules or use the provided FindXXX() routines.
 
+``Include`` calls for all the packages mentioned below.
+
+  # Macros for Vala precompiling
+  include(FindValaBinding)
+  include(FindValaBindingLocations)
+  include(UseVala)
+  include(UseValadoc)
 
 
 Finding Vala
@@ -150,6 +159,7 @@ Gathering source files
 ======================
 
 In most projects the CMake build should gather all the source files, then call Valac once. Otherwise valac will complain about missing dependencies (this may not be true with projects with sub-builds producing executables or libraries, but we will ignore that possibility here. These macros can handle that possibility too, if necessary).
+deodorant
 
 This version of the Valac macros can handle source files in subdirectories (anywhere, but will need some code-thinking). The code can do this by demanding that source files are supplied as full paths (``/home/rodger/ValaProject/src/main.vala'', not ``main.vala``).
 
@@ -203,7 +213,7 @@ Precompiler definitions
 
 At this point, if successfully built, the previous macros have gathered a great deal of data. They know where valac is, they know the flags needed on the compile line, and they can respond to a list of source files. You may wish to add some other tweaks to the valac compile, though.
 
-Flags can be added by including the UseVala module then calling the ``vala_precompile_add_definitions`` nacro. ::
+Flags can be added by including the UseVala module then calling the ``vala_precompile_add_definitions`` macro. ::
 
   include(UseVala)
 
@@ -212,11 +222,33 @@ Flags can be added by including the UseVala module then calling the ``vala_preco
     "--enable-experimental"
     )
 
-Once custom definitions have been added, use the same macro to add the binding ``--pkg=XXX`` declarations from the bindings. This example follows from the ``vala_check_binding'' example above. ::
+Once custom definitions have been added, use the same macro to add the binding ``--pkg=XXX`` declarations from the bindings. This example follows from the ``vala_check_binding`` example above. ::
 
   vala_precompile_add_definitions(${BINDINGS1_VALA_BINDINGS_CFLAGS})
 
 Now we have all the data needed to run the precompiler.
+
+
+
+Precompiler configuration
+=========================
+
+Cmake is cross-platform, and abstracts a handful of possibilities about how targets may be built. The Vala CMake macros react to the configuration, look in the cache to see how.
+
+If CMake code is configured for `debug`, the Vala CMake macros react and call debug on the Vala code too. ::
+
+  cmake -DCMAKE_BUILD_TYPE=Debug [path to source]
+
+This call will (in a GNU environment) write the C files to the build folder ("--save-temps") and create a dbug executable which can use gdb, Nemiver, etc.
+
+If using a debugger on the code, bear in mind the C files are packed in the cmake build folder, not side by side with the Vala code (in this module, anyway). This is no more awkward than other Vala debugging, just different (we have considered asking CMake code to inform Nemiver code, but see the README).  
+
+A note on the GNU environment - '-O2' optimisation is frequent. CMake `Release` builds are '-O3', but, ::
+
+  cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo
+
+will set an '-O2' flag with C debug info.
+
 
 
 Precompiling Vala sources
@@ -243,13 +275,9 @@ DIRECTORY
     omitted, the source files will be stored in CMAKE_CURRENT_BINARY_DIR.
 
 
-The following call is an example of the vala_precompile macro: ::
+Following the examples of gathering sources above, an example of the vala_precompile macro: ::
 
-  vala_precompile(VALA_C
-      source1.vala
-      source2.vala
-      source3.vala
-    )
+  vala_precompile(VALA_C ${VALA_SRCS})
 
 Most important is the variable VALA_C which will contain all the generated c
 file names after the call. This information can be used to create an executable, ::
@@ -260,9 +288,9 @@ file names after the call. This information can be used to create an executable,
 Valadoc
 =======
 
-Oh yeah(!) Valadoc depends on bindings, so this depends on the FindValaBindings macro (so every other module in this package).
+Oh yeah(!) Valadoc needs a list of bindings, so this module depends on the FindValaBindings macro (so every other module in this package).
 
-The macro ``add_valadoc_target`` adds a custonm target to the build code.
+The macro ``add_valadoc_target`` adds a custom target to the build code.
 
 The following sections may be specified to provide options to valadoc:
 
@@ -277,7 +305,7 @@ FLAGS
   Add flags to the valadoc call. Valadoc uses slghtly different flags to
   valac, so they must be explicity set. 
 
-an example of a call,
+An example,
 
   include(UseValadoc)
   add_valadoc_target(BINDINGS1)
@@ -286,7 +314,11 @@ run,
 
   cmake --build --target doc
 
-For full insight.
+or
+
+  make doc
+
+for insight.
 
 (The macro includes a call to a macro called ``FindValadoc``. This macro can be used alone, but maybe not to much purpose)
 
@@ -306,8 +338,8 @@ CMake Vala by pjanouch,
 
 
 
-Acknowledgments
-===============
+Acknowledgements
+================
 
 Thanks to Jakob Westhoff and Daniel Pfeifer, for the code.
 
@@ -318,3 +350,4 @@ Thanks to Jakob Westhoff and Daniel Pfeifer, for the code.
 
 .. _CMake Vala:   https://github.com/jakobwesthoff/Vala_CMake
 .. _slovnik-gui: https://github.com/pjanouch/slovnik-gui
+

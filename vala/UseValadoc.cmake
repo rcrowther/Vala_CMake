@@ -75,10 +75,10 @@ include(CMakeParseArguments)
 
 
 ###  Common ###
-set(VALADOC_VERSION 1)
+set(USEVALADOC_VERSION 1)
 
 # uncomment the following line to get debug output for this file
- set(_Valadoc_DEBUG True)
+# set(_Valadoc_DEBUG True)
 
 # Find valadoc
 find_package(Valadoc REQUIRED)
