@@ -320,7 +320,12 @@ or::
 
 for insight.
 
-(The macro includes a call to a macro called ``FindValadoc``. This macro can be used alone, but maybe not to much purpose)
+(The macro includes a call to a macro called ``FindValadoc``. This macro can be used alone, but maybe not to much purpose).
+
+
+Help
+====
+The source contains a full example in the `docs/` folder.
 
 
 
