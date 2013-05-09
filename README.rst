@@ -312,7 +312,7 @@ An example,::
 
 run,::
 
-  cmake --build --target doc
+  cmake --build . --target doc
 
 or::
 
