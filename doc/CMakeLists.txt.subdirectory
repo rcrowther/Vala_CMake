@@ -1,0 +1,7 @@
+# This code returns the filepaths of source files from the local
+# directory ending in .vala. It is a drop in to a subfolder, and can be
+# executed using the add_directory()  or include() macros.
+
+file(GLOB paths *.vala)
+
+set(VALA_SUB_SRCS ${paths} PARENT_SCOPE)
