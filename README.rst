@@ -49,7 +49,7 @@ Assuming the macros are stored under ``cmake/vala`` in your projects folder, add
 After the new module path as been added you can simply include() the provided
 modules or use the provided FindXXX() routines.
 
-``Include`` calls for all the packages mentioned below.
+``Include`` calls for all the packages mentioned below.::
 
   # Macros for Vala precompiling
   include(FindValaBinding)
@@ -305,16 +305,16 @@ FLAGS
   Add flags to the valadoc call. Valadoc uses slghtly different flags to
   valac, so they must be explicity set. 
 
-An example,
+An example,::
 
   include(UseValadoc)
   add_valadoc_target(BINDINGS1)
 
-run,
+run,::
 
   cmake --build --target doc
 
-or
+or::
 
   make doc
 
@@ -342,7 +342,6 @@ Acknowledgements
 ================
 
 Thanks to Jakob Westhoff and Daniel Pfeifer, for the code.
-
 
 .. _CMake: http://cmake.org
 .. _Vala: http://live.gnome.org/Vala
