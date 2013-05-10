@@ -12,7 +12,7 @@ About
 
 This code was originally a fork of Jakob Westhoff's `CMake Vala` code, as updated by Daniel Pfeifer. It is now a stand-alone project. See also the fork-within-a-project slovnik-gui_ by pjanouch.
 
-This CMake module is not compatible with CMake Vala code available elsewhere.``CMakeLists.txt`` files will need to be converted. See conversion_.
+This CMake module is not compatible with CMake Vala code available elsewhere.``CMakeLists.txt`` files will need to be converted.
 
 Compared to the modules linked above, this module has another basic step, extended documentation, and a by-design approach to handling sources in larger projects. It also has more options. 
 
@@ -213,6 +213,7 @@ Precompiler definitions
 
 At this point, if successfully built, the previous macros have gathered a great deal of data. They know where valac is, they know the flags needed on the compile line, and they can respond to a list of source files. You may wish to add some other tweaks to the valac compile, though.
 
+
 Flags can be added by including the UseVala module then calling the ``vala_precompile_add_definitions`` macro. ::
 
   include(UseVala)
@@ -225,6 +226,10 @@ Flags can be added by including the UseVala module then calling the ``vala_preco
 Once custom definitions have been added, use the same macro to add the binding ``--pkg=XXX`` declarations from the bindings. This example follows from the ``vala_check_binding`` example above. ::
 
   vala_precompile_add_definitions(${BINDINGS1_VALA_BINDINGS_CFLAGS})
+
+Although Valac will not accept `-D` flags through CMake, these macros will recognise them (by simple text substitution, they will not recognise cmake options)::
+
+  vala_precompile_add_definitions("-D GTK2")
 
 Now we have all the data needed to run the precompiler.
 

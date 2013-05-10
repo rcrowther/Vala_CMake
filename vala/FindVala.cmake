@@ -164,9 +164,18 @@ set(_VALA_PRECOMPILER_FLAGS ${CMAKE_VALA_FLAGS})
 # run *before* an invokation of vala_precompile output().
 macro(vala_precompile_add_definitions)
   if(${ARGC} GREATER 0)
-   #list(APPEND VALA_PRECOMPILER_OPTIONS ${ARGV})
-   list(APPEND _VALA_PRECOMPILER_FLAGS ${ARGV})
-  endif() 
+    foreach(_arg ${ARGV})
+      # Accept CMake -d/D flag configurations.
+      # Huh. Regex engines. Note the space-incharacter set definition, not \s.
+      string(REGEX REPLACE "^-?D[ ]*" "--define="
+        _use_vala_normalised_arg ${_arg}
+        )
+    message(STATUS "Valac definition: ${_use_vala_normalised_arg}")
+      list(APPEND _VALA_PRECOMPILER_FLAGS ${_use_vala_normalised_arg})
+    endforeach()
+
+   #list(APPEND _VALA_PRECOMPILER_FLAGS ${ARGV})
+  endif()
 endmacro()
 
 mark_as_advanced(

@@ -124,7 +124,7 @@
 
 # TODO: Confirm GENERATE_HEADER;GENERATE_VAPI work
 # TODO: Function signature.
-
+# TODO: Could use valadocs --quieter?
 include(CMakeParseArguments)
 cmake_policy(VERSION 2.8)
 
