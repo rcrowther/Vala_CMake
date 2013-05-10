@@ -58,6 +58,7 @@ modules or use the provided FindXXX() routines.
   include(UseValadoc)
 
 
+
 Finding Vala
 ============
 
@@ -213,6 +214,7 @@ Precompiler definitions
 
 At this point, if successfully built, the previous macros have gathered a great deal of data. They know where valac is, they know the flags needed on the compile line, and they can respond to a list of source files. You may wish to add some other tweaks to the valac compile, though.
 
+The provision of the following macro may seem fussy, if consistent. But Valac has it's own simplified `code preprocessor`_ for conditional compilation.
 
 Flags can be added by including the UseVala module then calling the ``vala_precompile_add_definitions`` macro. ::
 
@@ -355,6 +357,7 @@ Thanks to Jakob Westhoff and Daniel Pfeifer, for the code.
 
 .. _CMake: http://cmake.org
 .. _Vala: http://live.gnome.org/Vala
+.. _code preprocessor: https://live.gnome.org/Vala/Manual/Preprocessor
 .. _Genie: http://live.gnome.org/Genie
 
 .. _CMake Vala:   https://github.com/jakobwesthoff/Vala_CMake
