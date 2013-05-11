@@ -140,7 +140,7 @@ This will establish a set of variables with a GROUP_ID of ``BINDINGS1``, which c
 Finding Vala '.vapi' bindings
 =============================
 
-The ``vala_check_binding'' macro is similar to the ``pkg_check_modules'' function in the CMake module PkgConfig. You can use it by including the function then calling the ``vala_check_binding`` macro. ::
+The ``vala_check_binding`` macro is similar to the ``pkg_check_modules`` function in the CMake module PkgConfig. You can use it by including the function then calling the ``vala_check_binding`` macro, ::
 
   vala_check_binding(<Group Id> [binding names]...)
 
@@ -148,7 +148,13 @@ The following call is a simple example, ::
 
   include(FindValaBinding)
 
-  vala_check_binding("BINDINGS1" REQUIRED posix gio-2.0 gtk+-2.0 gee-1.0) 
+  vala_check_binding(BINDINGS1
+    REQUIRED
+    posix
+    gio-2.0
+    gtk+-2.0
+    gee-1.0
+    ) 
 
 Using the ``BINDINGS1`` set of locations, find these bindings and make them REQUIRED (compilation will fail if they are not present).
 
@@ -159,10 +165,9 @@ Using the ``BINDINGS1`` set of locations, find these bindings and make them REQU
 Gathering source files
 ======================
 
-In most projects the CMake build should gather all the source files, then call Valac once. Otherwise valac will complain about missing dependencies (this may not be true with projects with sub-builds producing executables or libraries, but we will ignore that possibility here. These macros can handle that possibility too, if necessary).
-deodorant
+In most projects the CMake build should gather all the source files, then call Valac once. Otherwise valac will complain about missing dependencies (this may not be true for projects with sub-builds producing executables or libraries, but we will ignore that possibility here. These macros can handle that possibility too, if necessary).
 
-This version of the Valac macros can handle source files in subdirectories (anywhere, but will need some code-thinking). The code can do this by demanding that source files are supplied as full paths (``/home/rodger/ValaProject/src/main.vala'', not ``main.vala``).
+This version of the Valac macros can handle source files in subdirectories anywhere. The code can do this by demanding that source files are supplied as full paths (``/home/rodger/ValaProject/src/main.vala``, not ``main.vala``).
 
 Here is a method to get full-path source listings from a subdirectory named ``/examples``. Add a ``CMakeLists.txt`` file to the directory containing,
 
@@ -182,11 +187,11 @@ In a top-level ``CMakeLists.txt`` file, add, ::
   add_subdirectory("/examples")
   list(APPEND VALA_SRCS ${VALA_SUB_SRCS})
 
-The ``add_subdirectory`` macro executes the subdirectory ``CMakeLists.txt`` we created, which sets VALA_SUB_SRCS to the GLOB filelist (fullpaths!), then appends the found list to VALA_SRCS.
+The ``add_subdirectory`` macro executes the subdirectory ``CMakeLists.txt`` we created, which sets VALA_SUB_SRCS to the GLOB filelist (fullpaths!), then appends the found list to VALA_SRCS. ``add_subdirectory`` also creates a folder in the build tree, reflecting the structure of the source tree.
 
-``add_subdirectory`` also creates a folder in the build tree, reflecting the structure of the source tree.
+Repeat for every subdirectory containing Vala code.
 
-When constructing build code, there are many different needs . For example, if the directories contain clashing filenames, the build will need to target specific filenames. A GLOB will fail, so name the files and append CMAKE_CURRENT_SOURCE_DIRECTORY. ::
+When constructing build code, there are many needs. For example, if the directories contain redundant code, a GLOB will fail. The build will need to target specific filenames, so name the files then append CMAKE_CURRENT_LIST_DIRECTORY, to generate full paths ::
 
   # This code returns the filepaths of name source files from the local
   # directory. It should be customised to a subfolder filelist, and can be
@@ -200,7 +205,7 @@ When constructing build code, there are many different needs . For example, if t
     )
 
   foreach(_vala_sub_path ${_vala_sub_paths})
-    list(APPEND _paths _vala_sub_path)
+    list(APPEND _paths "${CMAKE_CURRENT_LIST_DIRECTORY}${_vala_sub_path}")
   endforeach()
 
   set(VALA_SUB_SRCS ${_paths} PARENT_SCOPE)
@@ -212,7 +217,7 @@ The above are examples, but will work for many needs.
 Precompiler definitions
 =======================
 
-At this point, if successfully built, the previous macros have gathered a great deal of data. They know where valac is, they know the flags needed on the compile line, and they can respond to a list of source files. You may wish to add some other tweaks to the valac compile, though.
+At this point, if successfully built, the previous macros have gathered a great deal of data. They know where valac is, they know the flags needed on the compile line, and they can respond to a list of source files. You may wish to add some tweaks to the valac compile, though.
 
 The provision of the following macro may seem fussy, if consistent. But Valac has it's own simplified `code preprocessor`_ for conditional compilation.
 
@@ -240,9 +245,9 @@ Now we have all the data needed to run the precompiler.
 Precompiler configuration
 =========================
 
-Cmake is cross-platform, and abstracts a handful of possibilities about how targets may be built. The Vala CMake macros react to the configuration, look in the cache to see how.
+Cmake is cross-platform, and abstracts a handful of possibilities about how targets may be built. The Vala CMake macros react to the configuration (look in the cache to see how).
 
-If CMake code is configured for `debug`, the Vala CMake macros react and call debug on the Vala code too. ::
+If CMake code is configured for `Debug`, the Vala CMake macros react and call debug on the Vala code too. ::
 
   cmake -DCMAKE_BUILD_TYPE=Debug [path to source]
 
@@ -282,7 +287,7 @@ DIRECTORY
     omitted, the source files will be stored in CMAKE_CURRENT_BINARY_DIR.
 
 
-Following the examples of gathering sources above, an example of the vala_precompile macro: ::
+Following the examples of gathering sources above, an example of the vala_precompile macro, ::
 
   vala_precompile(VALA_C ${VALA_SRCS})
 
@@ -295,11 +300,11 @@ file names after the call. This information can be used to create an executable,
 Valadoc
 =======
 
-Oh yeah(!) Valadoc needs a list of bindings, so this module depends on the FindValaBindings macro (so every other module in this package).
+Oh yeah(!) Valadoc needs a list of bindings, so this module depends on the FindValaBindings macro and every other module in this package.
 
 The macro ``add_valadoc_target`` adds a custom target to the build code.
 
-The following sections may be specified to provide options to valadoc:
+The following sections may be specified to provide options to valadoc,
 
 SYMLINK_FROM_SOURCE
   Create a symlink from the source directory to the documentation index. Only
