@@ -170,7 +170,6 @@ macro(vala_precompile_add_definitions)
       string(REGEX REPLACE "^-?D[ ]*" "--define="
         _use_vala_normalised_arg ${_arg}
         )
-    message(STATUS "Valac definition: ${_use_vala_normalised_arg}")
       list(APPEND _VALA_PRECOMPILER_FLAGS ${_use_vala_normalised_arg})
     endforeach()
 

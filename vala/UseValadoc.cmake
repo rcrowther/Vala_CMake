@@ -17,26 +17,34 @@
 # This module relies on a previous call to FindValaBindingLocations.
 #
 # Usage:
-#   add_valadoc_target(<GROUP_ID> [OUTPUT_DIRECTORY] [TARGET_NAME] [FLAGS])
+#   add_valadoc_target(<GROUP_ID> [SYMLINK_FROM_SOURCE] [OUTPUT_DIRECTORY] [TARGET_NAME] [FLAGS])
 #
 #
 # Takes arguments:
+# SYMLINK_FROM_SOURCE
+#   Create a symlink from the source directory to the documentation index. Only
+#   works on Unix, on other platforms this option is silently ignored.
+#
 # OUTPUT_DIRECTORY
-#   Name an output directiory. Relative to the source root. Defaults to 'doc',
+#   Name an output directory. Relative to the source root. Defaults to 'doc',
 #   resulting in <source_root>/doc/doc
 #
 # TARGET_NAME
 #   Name of the target to be formed. Defaults to 'doc'.
 #
 # FLAGS
-#   Add flags to the valadoc call. Valadoc uses slghtly different flags to
-#   valac, so they must be explicity set. 
+#   Add flags to the valadoc call. Valadoc uses slightly different flags to
+#   valac, so they must be explicitly set. 
 #
 #
 #
 # Example:
 #
-#  add_valadoc_target(BINDINGS1)
+#  add_valadoc_target(BINDINGS1
+#    SYMLINK_FROM_SOURCE
+#    FLAGS
+#      --enable-experimental
+#    )
 #
 
 
@@ -82,7 +90,7 @@ find_package(Valadoc REQUIRED)
 
 function(add_valadoc_target _group_id)
   cmake_parse_arguments(ARGS
-    ""
+    "SYMLINK_FROM_SOURCE"
     "OUTPUT_DIRECTORY;TARGET_NAME"
     "FLAGS"
     ${ARGN}
@@ -124,8 +132,26 @@ function(add_valadoc_target _group_id)
     VERBATIM
     )
 
+  # If not UNIX, silently ignore. Too trivial, and makes the code
+  # cross-platform.
+  if(ARGS_SYMLINK_FROM_SOURCE AND UNIX)
+    add_custom_command(TARGET ${_target_name}
+      POST_BUILD
+      COMMAND
+        cmake -E create_symlink ${_output_directory}/doc/index.htm docs
+      DEPENDS
+        ${_target_name}
+      WORKING_DIRECTORY
+        ${CMAKE_CURRENT_SOURCE_DIR}
+      COMMENT
+        "creating symlink to documentation"
+      VERBATIM
+      )
+  endif()
+
   if(_Valadoc_DEBUG)
     message(STATUS "--------UseValadoc.cmake debug------------")
+    message(STATUS "ARGS_SYMLINK_FROM_SOURCE: ${ARGS_SYMLINK_FROM_SOURCE}")
     message(STATUS "COMMAND: ${VALADOC_EXECUTABLE} --force ${ARGS_FLAGS} -b ${CMAKE_CURRENT_SOURCE_DIR} --directory ${CMAKE_CURRENT_SOURCE_DIR}/${_output_directory} ${_vapi_arguments} ${${_group_id}_VALA_BINDINGS_CFLAGS} <some Vala sources...>")
     message(STATUS "--------------------")
   endif()

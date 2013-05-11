@@ -301,21 +301,29 @@ The macro ``add_valadoc_target`` adds a custom target to the build code.
 
 The following sections may be specified to provide options to valadoc:
 
+SYMLINK_FROM_SOURCE
+  Create a symlink from the source directory to the documentation index. Only
+  works on Unix, on other platforms this option is silently ignored.
+
 OUTPUT_DIRECTORY
-  Name an output directiory. Relative to the source root. Defaults to 'doc',
+  Name an output directory. Relative to the source root. Defaults to 'doc',
   resulting in <source_root>/doc/doc
 
 TARGET_NAME
   Name of the target to be formed. Defaults to 'doc'.
 
 FLAGS
-  Add flags to the valadoc call. Valadoc uses slghtly different flags to
-  valac, so they must be explicity set. 
+  Add flags to the valadoc call. Valadoc uses slightly different flags to
+  valac, so they must be explicitly set. 
 
 An example,::
 
   include(UseValadoc)
-  add_valadoc_target(BINDINGS1)
+  add_valadoc_target(BINDINGS1
+    SYMLINK_FROM_SOURCE
+    FLAGS
+      --enable-experimental
+    )
 
 run,::
 

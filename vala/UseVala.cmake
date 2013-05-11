@@ -132,7 +132,7 @@ cmake_policy(VERSION 2.8)
 set(VALA_USE_VERSION 1)
 
 # uncomment the following line to get debug output for this file
- set(_Vala_Use_DEBUG True)
+# set(_Vala_Use_DEBUG True)
 
 
 
