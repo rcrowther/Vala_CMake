@@ -12,6 +12,8 @@ About
 
 This code was originally a fork of Jakob Westhoff's `CMake Vala` code, as updated by Daniel Pfeifer. It is now a stand-alone project. See also the fork-within-a-project slovnik-gui_ by pjanouch.
 
+For code on a conceptually higher level, try looking at autovala_.
+
 This CMake module is not compatible with CMake Vala code available elsewhere.``CMakeLists.txt`` files will need to be converted.
 
 Compared to the modules linked above, this module has another basic step, extended documentation, and a by-design approach to handling sources in larger projects. It also has more options. 
@@ -310,6 +312,10 @@ SYMLINK_FROM_SOURCE
   Create a symlink from the source directory to the documentation index. Only
   works on Unix, on other platforms this option is silently ignored.
 
+EXTRA_TARGETS
+  Set up extra targets named <TARGET_NAME>-internal, <TARGET_NAME>-private
+  and <TARGET_NAME>-all. All extra targets compile to OUTPUT_DIRECTORY.
+
 OUTPUT_DIRECTORY
   Name an output directory. Relative to the source root. Defaults to 'doc',
   resulting in <source_root>/doc/doc
@@ -375,4 +381,5 @@ Thanks to Jakob Westhoff and Daniel Pfeifer, for the code.
 
 .. _CMake Vala:   https://github.com/jakobwesthoff/Vala_CMake
 .. _slovnik-gui: https://github.com/pjanouch/slovnik-gui
+.. _autovala: https://github.com/rastersoft/autovala
 

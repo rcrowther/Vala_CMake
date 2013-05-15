@@ -9,6 +9,7 @@ TODO
   -- yum paths (Fedora, CentOS, etc.)
   -- Whatever methods Vala is compiled for Windows (Cygwin?)
 - the documentation ain't cmake
+- Should the findbinding approach compile with --nostdpkg ?
 - Parallel compilation, crosscheck,
 http://www.kitware.com/blog/home/post/434
 - Should UseVala depend on custom vapi lists?

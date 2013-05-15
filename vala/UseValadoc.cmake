@@ -25,6 +25,10 @@
 #   Create a symlink from the source directory to the documentation index. Only
 #   works on Unix, on other platforms this option is silently ignored.
 #
+# EXTRA_TARGETS
+#   Set up extra targets named <TARGET_NAME>-internal, <TARGET_NAME>-private
+#   and <TARGET_NAME>-all. All these targets compile to OUTPUT_DIRECTORY. 
+#
 # OUTPUT_DIRECTORY
 #   Name an output directory. Relative to the source root. Defaults to 'doc',
 #   resulting in <source_root>/doc/doc
@@ -90,7 +94,7 @@ find_package(Valadoc REQUIRED)
 
 function(add_valadoc_target _group_id)
   cmake_parse_arguments(ARGS
-    "SYMLINK_FROM_SOURCE"
+    "SYMLINK_FROM_SOURCE;EXTRA_TARGETS"
     "OUTPUT_DIRECTORY;TARGET_NAME"
     "FLAGS"
     ${ARGN}
@@ -123,16 +127,46 @@ function(add_valadoc_target _group_id)
     list(APPEND _vapi_arguments "--vapidir=${_dir}")
   endforeach()
 
+  list(APPEND _commandline  --force ${ARGS_FLAGS} -b ${CMAKE_CURRENT_SOURCE_DIR} --directory ${CMAKE_CURRENT_SOURCE_DIR}/${_output_directory} ${_vapi_arguments} ${${_group_id}_VALA_BINDINGS_CFLAGS}  ${VALA_SRCS})
 
   add_custom_target(${_target_name}
     COMMAND
-      ${VALADOC_EXECUTABLE} --force ${ARGS_FLAGS} -b ${CMAKE_CURRENT_SOURCE_DIR} --directory ${CMAKE_CURRENT_SOURCE_DIR}/${_output_directory} ${_vapi_arguments} ${${_group_id}_VALA_BINDINGS_CFLAGS}  ${VALA_SRCS}
+      ${VALADOC_EXECUTABLE} ${_commandline}
     COMMENT
       "building documentation..."
     VERBATIM
     )
 
-  # If not UNIX, silently ignore. Too trivial, and makes the code
+  if(ARGS_EXTRA_TARGETS)
+
+
+  add_custom_target("${_target_name}-internal"
+    COMMAND
+      ${VALADOC_EXECUTABLE} --internal ${_commandline}
+    COMMENT
+      "building documentation with internal nodes..."
+    VERBATIM
+    )
+
+  add_custom_target("${_target_name}-private"
+    COMMAND
+      ${VALADOC_EXECUTABLE} --private ${_commandline}
+    COMMENT
+      "building documentation with private nodes..."
+    VERBATIM
+    )
+
+  add_custom_target("${_target_name}-all"
+    COMMAND
+      ${VALADOC_EXECUTABLE} --private --internal ${_commandline}
+    COMMENT
+      "building documentation with all nodes..."
+    VERBATIM
+    )
+
+  endif()
+
+  # If not UNIX, silently ignore. Too trivial, and ignoring makes the code
   # cross-platform.
   if(ARGS_SYMLINK_FROM_SOURCE AND UNIX)
     add_custom_command(TARGET ${_target_name}
