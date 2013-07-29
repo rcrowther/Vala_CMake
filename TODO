@@ -5,6 +5,10 @@ DONE
 
 
 TODO
+- Vala update reveals some errors
+- Needs a quickstart. Probaly published to GitHub. With all commands.
+Make the README into a MANUAL.
+- Rework theCMake.txt example, and annotate.
 - ValaBindingsLocation should work on more architectures. Prime targets are
   -- yum paths (Fedora, CentOS, etc.)
   -- Whatever methods Vala is compiled for Windows (Cygwin?)
