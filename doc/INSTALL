@@ -1,0 +1,119 @@
+Copyright 2013 Robert Crowther.
+
+INSTALL
+=======
+
+About
+=====
+This project can be built and installed using CMake.
+
+CMake is a cross-platform build tool. It works by invoking the native build tools of a platform through a common interface. The price of this is an extra step in compilation. The payoff is that any code equipped with CMake macros can be built easily by common methods on most common platforms.
+
+CMake is part of a system for software building and distribution. It was written, and is maintained, by a company called Kitware. For information on CMake and Kitware can offer, please visit the CMake website,
+
+http://www.cmake.org
+
+This file assumes you have some software you wish to compile, which contains CMake macros. Here are some generic installation instructions.
+
+
+Basic Installation
+==================
+
+The platform must have a version of the CMake code installed. This can be obtained, as usual, by packaging or compilation, etc. The platform must also have all necessary installers, build tools, libraries, and other compilation tools installed. CMake does not perform these tasks.
+
+
+
+
+Out-of-source builds
+====================
+CMake has the ability to create out-of-source builds. That is, the generated compiled files, and some cmake and system build files (such as makefiles) are placed in a separate folder. This is unlike the results of most compilers, which would put the .o files, and any whatever else, next to the original files. This might seem intuitive, but putting files in a separate folder,
+
+- Means source file folders are kept clean, and the coder doesn't need to rake through a lot of extra files to find source code to edit.
+- Removing a build to create a new one is as easy as deleting the folder.
+
+There are few disadvantages to out-of-source builds, and they are recommended.
+
+If you wish to create an out of source build, please create a folder for it, if one is not available (.../build/ would be a good name).
+
+
+Constructing the build code
+===========================
+The CMake code provided by the author will attempt to gather informaation on the system and libraries installed. If this is suitable, it will take copies of the source files, generate CMake support code, and code for the build tools it has found.
+
+If you wish to change the way compilation is performed, please see the notes further down.
+
+All in one
+==========
+If you want to try and see,
+
+cmake --build <path to the main CMakeLists.txt>
+
+should create build files, run the build tool, then install.
+
+
+The simple steps
+================
+Navigate into the code to be compiled. If you wish to make an out of source build, then navigate into the folder where you wish to do the build. Then,
+
+Inplace build
+-------------
+"I'd like the compile files next to source files"
+
+  cmake
+
+
+Out-of-source build
+-------------------
+"I'd like the compile files tidied away into a folder"
+
+  cmake <path to the CMakeLists.txt file in the top level of the source code>
+
+
+i.e. run 'cmake' from where the compiling should be, give a filepath which points at where the main CMakeLists.txt file can be found.
+
+If something goes wrong, it will probably be here. CMake produces more controlled and relevant output messages than other build systems. Likely, the problem is not with CMake, but that some dependancy has not been satisfied in the code.
+
+
+Compiling
+=========
+CMake generates files for the native build code. It has a common way of compiling from a command line,
+
+cmake --build
+
+Some build tools can be run directly once cmake has assembled suitable code. For example, if the platform uses, and the CMake macro geneates Makefile code, then the source can be compiled with the command,
+
+make
+
+Install
+=======
+
+
+Compiling strategy
+==================
+CMake has a few builtin compile strategies, which work across platforms. To use them, run CMake with some parameter,
+
+cmake -DCMAKE_BUILD_TYPE=Release <path to the main CMakeLists.txt>
+
+The builtin strategies are,
+
+~ Debug
+~ Release
+~ RelWithDebInfo
+~ MinSizeRel
+
+CMake authors may provide other options too. Please see their documentation. The default is 'Release', which is what most people will want.
+
+
+Compiling and Options
+=====================
+When the cmake command is run in source folders, it gathers and generates a great deal of data. This data is stored in a cache, ready for supplying to the system's buildand compiler tools. The cache is available and can be adapted (unlike some sytems where altered compilations require a rewrite of code). CMake code authors may provide their own options which can appear in the cache, and a user can modify.
+
+There are two main interfaces, a ncurses (terminal-based) and QT interface. To see these options, using ncurses, run cmake with the -i option,
+
+cmake -i
+
+The terminal will then enter a question and aswer session requesting the state of build variables.
+
+To use the Qt interface (or other graphical interfaces), click on the CMake cache file, or launch the GUI interface and navigate to the cache file.
+
+Altering CMake's variables at this point is not a critical process. The file is not yet compiled, nothing is installed, and the variables can be altered again by starting over.
