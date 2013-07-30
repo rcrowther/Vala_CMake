@@ -5,6 +5,9 @@ DONE
 
 
 TODO
+Auto detect packages :)
+Auto detect subfolders?
+Maybe valac flags could be passed to valadoc?
 - Vala update reveals some errors
 - Needs a quickstart. Probaly published to GitHub. With all commands.
 Make the README into a MANUAL.
