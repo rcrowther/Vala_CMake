@@ -42,13 +42,22 @@ The CMake code provided by the author will attempt to gather informaation on the
 
 If you wish to change the way compilation is performed, please see the notes further down.
 
-All in one
-==========
+
+The fast steps
+==============
 If you want to try and see,
 
-cmake --build <path to the main CMakeLists.txt>
+  cmake --build <path to the main CMakeLists.txt>
 
-should create build files, run the build tool, then install.
+should create build files, run the build tool, then compile. Then,
+
+  cmake install
+
+or, on a Make platform,
+
+  install
+
+to install.
 
 
 The simple steps
@@ -84,8 +93,18 @@ Some build tools can be run directly once cmake has assembled suitable code. For
 
 make
 
+
 Install
 =======
+Again,
+
+  cmake install
+
+or, on a Make platform,
+
+  install
+
+to install.
 
 
 Compiling strategy
@@ -96,10 +115,11 @@ cmake -DCMAKE_BUILD_TYPE=Release <path to the main CMakeLists.txt>
 
 The builtin strategies are,
 
-~ Debug
-~ Release
-~ RelWithDebInfo
-~ MinSizeRel
+- None
+- Debug
+- Release
+- RelWithDebInfo
+- MinSizeRel
 
 CMake authors may provide other options too. Please see their documentation. The default is 'Release', which is what most people will want.
 
