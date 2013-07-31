@@ -220,8 +220,8 @@ Change compile strategy
 =======================
 To use the builtin CMake compile strategies, remake the build files, ::
 
-cmake -DCMAKE_BUILD_TYPE=Release
-cmake -DCMAKE_BUILD_TYPE=Debug
+  cmake -DCMAKE_BUILD_TYPE=Release
+  cmake -DCMAKE_BUILD_TYPE=Debug
 
 To change settings in the CMake interface (filepaths, debug switches, other options) ::
 
@@ -229,7 +229,7 @@ To change settings in the CMake interface (filepaths, debug switches, other opti
 
 for ncurses, or, if the system has the QT interface loaded, ::
 
-  cmake ...
+  click on the file CMakeCache.txt
 
 
 
