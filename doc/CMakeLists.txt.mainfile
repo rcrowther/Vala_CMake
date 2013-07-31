@@ -104,7 +104,7 @@ set(LIB_PATHS
   ${GTHREAD_LIBRARY_DIRS}
   ${GEE_LIBRARY_DIRS}
   )
-# can use target_link_libraries()?
+# deprecated. Can use target_link_libraries()?
 link_directories(${LIB_PATHS})
 
 
@@ -289,7 +289,7 @@ set_target_properties(projectName
 #-----------------
 include(UseValadoc)
 
-# Valadoc needs and uses slightly different flags to valac. Plese see
+# Valadoc needs and uses slightly different flags to valac. Please see
 # documentation. The flag --enable-experimental is added here.
 add_valadoc_target(BINDINGS1
   FLAGS

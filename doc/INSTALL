@@ -18,7 +18,6 @@ This file assumes you have some software you wish to compile, which contains CMa
 
 Basic Installation
 ==================
-
 The platform must have a version of the CMake code installed. This can be obtained, as usual, by packaging or compilation, etc. The platform must also have all necessary installers, build tools, libraries, and other compilation tools installed. CMake does not perform these tasks.
 
 
@@ -38,7 +37,7 @@ If you wish to create an out of source build, please create a folder for it, if 
 
 Constructing the build code
 ===========================
-The CMake code provided by the author will attempt to gather informaation on the system and libraries installed. If this is suitable, it will take copies of the source files, generate CMake support code, and code for the build tools it has found.
+The CMake code provided by the author will attempt to gather information on the system and libraries installed. If this is suitable, it will take copies of the source files, generate CMake support code, and code for the build tools it has found.
 
 If you wish to change the way compilation is performed, please see the notes further down.
 
@@ -80,7 +79,7 @@ Out-of-source build
 
 i.e. run 'cmake' from where the compiling should be, give a filepath which points at where the main CMakeLists.txt file can be found.
 
-If something goes wrong, it will probably be here. CMake produces more controlled and relevant output messages than other build systems. Likely, the problem is not with CMake, but that some dependancy has not been satisfied in the code.
+If something goes wrong, it will probably be here. CMake produces more controlled and relevant output messages than other build systems. Likely, the problem is not with CMake, but that some dependency has not been satisfied in the code.
 
 
 Compiling
@@ -126,13 +125,13 @@ CMake authors may provide other options too. Please see their documentation. The
 
 Compiling and Options
 =====================
-When the cmake command is run in source folders, it gathers and generates a great deal of data. This data is stored in a cache, ready for supplying to the system's buildand compiler tools. The cache is available and can be adapted (unlike some sytems where altered compilations require a rewrite of code). CMake code authors may provide their own options which can appear in the cache, and a user can modify.
+When the cmake command is run in source folders, it gathers and generates a great deal of data. This data is stored in a cache, ready for supplying to the system's build and compiler tools. The cache is available and can be adapted (unlike some systems where altered compilations require a rewrite of code). CMake code authors may provide their own options which can appear in the cache, and a user can modify.
 
-There are two main interfaces, a ncurses (terminal-based) and QT interface. To see these options, using ncurses, run cmake with the -i option,
+There are two main interfaces, an ncurses (terminal-based) and QT interface. To see these options, using ncurses, run cmake with the -i option,
 
 cmake -i
 
-The terminal will then enter a question and aswer session requesting the state of build variables.
+The terminal will then enter a question and answer session requesting the state of build variables.
 
 To use the Qt interface (or other graphical interfaces), click on the CMake cache file, or launch the GUI interface and navigate to the cache file.
 

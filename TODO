@@ -1,4 +1,4 @@
-The code is littered with TODO markings. Pleasee loiok at source for details.
+The code is littered with TODO markings. Please look at source for details.
 
 DONE
 - Where's Valadoc?
@@ -7,11 +7,12 @@ DONE
 TODO
 Auto detect packages :)
 Auto detect subfolders?
+Mainfile: Link_libs/link_dirs deprecated for target specific verions.
 Maybe valac flags could be passed to valadoc?
 - Vala update reveals some errors
-- Needs a quickstart. Probaly published to GitHub. With all commands.
+- Needs a quickstart. Probably published to GitHub. With all commands.
 Make the README into a MANUAL.
-- Rework theCMake.txt example, and annotate.
+- Rework the CMake.txt example, and annotate.
 - ValaBindingsLocation should work on more architectures. Prime targets are
   -- yum paths (Fedora, CentOS, etc.)
   -- Whatever methods Vala is compiled for Windows (Cygwin?)
@@ -25,3 +26,27 @@ BACKBURNING
 - Wouldn't it be nice if Nemiver could be pre-allocated with Vala source locations (and maybe C files)?
 
 
+
+== MAYBEPATH
+Draft
+No testing.
+Features considered, code sketched out. 
+May contain intrusive debug code, but should be operative.
+
+Alpha
+Only basic testing. May fail on inplace compiling, for example
+All features/API subject to change.
+May contain debug code, but should be operative.
+
+Beta
+Enough testing, even internal, to ensure Alpha behaviour unlikely.
+Basic approach is frozen, though features open to change.
+May contain debug code, but should be operative.
+
+Release Candidate
+Works with source code as expected by a user. Should be tested on yum and maybe cygwin hosts.
+Code developed enough for the features unlikly to change.
+Debug code should be formalized.
+
+Release
+A Release Candidate tested enough, preferably externally, to suggest it will perform with the stated features, and as the user can expect.
