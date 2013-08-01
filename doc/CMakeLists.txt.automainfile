@@ -1,0 +1,226 @@
+#-----
+# Init
+#-----
+cmake_minimum_required(VERSION 2.6)
+
+# Add the CMake Vala package
+
+# If the package was not placed directly into the project, alter this
+# line to point at the folder containing the macros.
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/Vala_CMake/vala)
+
+
+# Include macros for Vala precompiling.
+# Would only be altered if CMake_Vala changes it's directory
+# structure.
+include(UseVala)
+include(AutoVala)
+include(FindValaBinding)
+include(FindValaBindingLocations)
+
+
+
+#--------------
+# C Compiler
+#--------------
+# Replace the name with the name of your project. This should be done
+# for every reference below, too.
+project(projectName C)
+
+
+
+#--------------
+# Vala Compiler
+#--------------
+find_package(Vala 0.16 REQUIRED)
+
+
+#--------------
+# AutoVala
+#--------------
+# Does all package checking, library checking, and most flag allocation, except for the libray data itself.
+vala_autopackage(REQUIRED
+  glib-2.0
+  gobject-2.0
+  gtk+-3.0
+  gio-2.0
+  gio-unix-2.0
+  gtk+-3.0
+  gthread-2.0
+  gee-1.0
+  )
+
+
+#---------------
+# Compiler Flags
+#---------------
+# TODO: Now deprecated, should be set on a per-target basis.
+link_libraries(${AUTOVALA_LIBRARIES})
+
+
+#--------------------------
+# Vala bindings
+#--------------------------
+# Find path locations, then files, of Vala bindings.
+
+# As noted above, vala bindings may not be mapped directly to
+# libraries. For example, This list includes bindings for 'posix' and
+# 'linux', mappings made by Vala bindings which are part of GLib?. But
+# the library gthread-2.0 is part of the glib-2.0 binding, so is not
+# included here.
+list(APPEND VALA_BINDINGS_LIST
+   posix
+   linux
+   glib-2.0
+   gobject-2.0
+   gio-2.0
+   gio-unix-2.0
+   gtk+-2.0
+   gee-1.0
+   )
+
+# Look for paths where bindings may exist.
+# Depending on the parameters supplied, this looks in directories such
+# as ... and the project/vapi folder.
+
+# REQUIRED that some location is found, and namespace this set of
+# locations as BINDINGS1.
+vala_find_binding_locations(BINDINGS1
+  # INCLUDE_GENERIC_SYSTEM_DIRECTORY
+  INCLUDE_SYSTEM_DIRECTORY
+  CUSTOM_BINDING_DIRECTORIES
+    vapi
+  REQUIRED
+  )
+
+# Check bindings exist in the locations found in BINDINGS1.
+# This sets several variables, but the most interesting is
+# BINDINGS1_VALA_BINDINGS_CFLAGS.
+vala_check_binding(BINDINGS1
+  REQUIRED
+  ${VALA_BINDINGS_LIST}
+  )
+
+
+#--------------------------
+# Supplied build interface
+#--------------------------
+# A place to add code for CMake's build interface.
+
+# Check for Gtk version
+# This will be used in vala precompilation, and documentation.
+SET(GTK_VERSION_SYMBOL "GTK${GTK_MAJOR_VERSION}")
+
+# Add variables which will appear as options in the interface.
+
+# This variable will be used to switch internal debugging on and off,
+# via preprocessing directives. It is supplied as a -D flag to the
+# compile line.
+option(PROJECT_DEBUG "Show internal debugging (reports send messages etc.)" off)
+
+# A convenience, providing a CMake_Vala option hrough the build
+# interface.
+option(VALAC_QUIETER "Make Valac precompile quieter." off)
+
+
+
+#------------------------
+# Gather source locations
+#------------------------
+# Add every subdirectory containing a Vala_CMake.txt subdirectory file.
+
+# Some examples are given. 
+list(APPEND SUBFOLDER_SRCS
+  #common
+  #src
+  )
+
+# Add the subdirectory code to the VALA_SRCS variable
+# Unless the gathering of sources is not done using the supplied
+# subdirectory code, do not change this code.
+foreach(subfolder ${SUBFOLDER_SRCS})
+  add_subdirectory(${subfolder})
+  list(APPEND VALA_SRCS ${VALA_SUB_SRCS})
+endforeach(subfolder ${SUBFOLDER_SRCS})
+
+
+
+#-----------------
+# Vala precompile
+#-----------------
+# Add Valac flags.
+# This variable was added as an option in the 'Supplied build
+# interface' section. Now it is used to trigger a compile symbol, and
+# presumably some preprocessing code, here.
+if(PROJECT_DEBUG)
+  vala_precompile_add_definitions("--define=PROJECT_DEBUG")
+endif(PROJECT_DEBUG)
+
+# Handle the libray version using the version symbol built above.
+vala_precompile_add_definitions("D ${GTK_VERSION_SYMBOL}")
+
+
+# Vala preprocessor definitions are added below.
+
+# Change as you wish. Note that --quiet can be handled through CMake
+# interface, and this code set an interface option above.
+vala_precompile_add_definitions(
+  "--disable-assert"
+  "--enable-experimental"
+  )
+
+# Add all the binding flags to the Vala precompilation
+vala_precompile_add_definitions(${BINDINGS1_VALA_BINDINGS_CFLAGS})
+
+# ...and compile Vala code to c code.
+vala_precompile(VALA_C
+  ${VALA_SRCS}
+  )
+
+
+
+#-----------------
+# C Compiling
+#-----------------
+# If the name of the executable should be changed ...?
+add_executable(projectName ${VALA_C})
+
+# This helps, as cmake may be confused by the mention of Vala
+set_target_properties(projectName PROPERTIES LINKER_LANGUAGE C)
+
+# Set some properties on the main target.
+set_target_properties(projectName
+  PROPERTIES
+  # Uncomment this to put the executable in the main folder, rather
+  # than the build folder
+  #RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}
+  )
+
+
+
+#-----------------
+# Documentation
+#-----------------
+include(UseValadoc)
+
+# Valadoc needs and uses slightly different flags to valac. Please see
+# documentation. The flag --enable-experimental is added here.
+add_valadoc_target(BINDINGS1
+  FLAGS
+    -D ${GTK_VERSION_SYMBOL}
+    --enable-experimental
+  )
+
+
+
+#-----------------
+# Install
+#-----------------
+install(TARGETS 
+  projectName
+  RUNTIME
+  CONFIGURATIONS
+    Release
+  DESTINATION
+    bin
+    )

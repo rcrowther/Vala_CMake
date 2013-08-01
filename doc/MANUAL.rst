@@ -64,9 +64,10 @@ modules or use the provided FindXXX() routines.
 Finding Vala
 ============
 
-The FindVala module works like other Find modules in CMake.
-You can use it by simply calling the usual ``find_package`` function. Default
-parameters like ``REQUIRED`` and ``QUIETLY`` are supported, as are version arguments and ``EXACT``::
+The FindVala module works like other Find modules in CMake. You can
+use it by simply calling the usual ``find_package`` function. Default
+parameters like ``REQUIRED`` and ``QUIETLY`` are supported, as are
+version arguments and ``EXACT``::
 
     find_package(Vala 0.16 REQUIRED)
 
@@ -85,13 +86,68 @@ VALA_VERSION_STRING
 ...and some variables, mainly of internal use.
 
 
+Finding pkg-config, libraries, and bindings
+===========================================
+This set of CMake modules allows very full and granular detection of
+libraries, pkg-config, and bindings. This matches the structure in
+other CMake language modules, and allows the coder very granular
+control. A machine with two compilers and several bindings is no
+problem, and these can even be switched.
+
+However, the Vala compiler, 'valac', has an ability to hunt for
+libraries and headers, requiring only a list of pkg-config
+specifications. This is rather wonderful. As a gesture towards this,
+Vala_CMake includes the AutoVala module, with some functions which
+generalizxe the process. If the code has no special binding
+requirements, the macros there may be most of what is needed. And they
+make the main CMakeLists.txt file much shorter and easier to maintain.
+
+
+
+AutoVala
+========
+Compile vala files to their c equivalents for further processing
+
+The vala compiler, 'valac', has an ability to hunt for libraries and
+headers, requiring only a list of pkg-config specifications.
+
+This module contains some code to replicate some of that ability. Not
+all of the guesswork is included, as the modules will always be
+constructed to capable of mimicking cmake stock setups.
+
+The vala_autopackage() command checks package names, then assembles
+lists of package details. It removes most of the bulk of checking
+packages, gathering flags, and library testing from the main
+CMakeLists.txt file. It sets some common variables via, ::
+
+  add_definitions(${_cflags})
+  link_directories(${_library_dirs})
+
+Library details are passed out in a variable, as CMake has deprecated
+the general functions for setting these.
+
+Usage:
+  vala_autopackage([REQUIRED] [QUIET] [<package name>]*)
+
+
+Defines:
+AUTOVALA_LIBRARIES
+   A list of libraries for a target_link_libraries() call.
+
+
+
 
 Finding Vala '.vapi' binding sources
-====================================
+==================================== 
 
-Valac has it's own magic for finding bindings. The source code includes binding sets as a fallback. The source also has a build which ensures binding files are installed in predefined directories. This means an installed valac can find binding sets without needing full paths.
+Valac has it's own magic for finding bindings. The source code
+includes binding sets as a fallback. The source also has a build which
+ensures binding files are installed in predefined directories. This
+means an installed valac can find binding sets without needing full
+paths.
 
-However, this version of Vala CMake has a macro which explicitly searches for bindings because, 
+However, this version of Vala CMake has a macro which explicitly
+searches for bindings because,
 
 - The build tool(cmake) should detect and react to the lack of bindings, not
   cause valac to fail.
