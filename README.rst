@@ -88,7 +88,6 @@ Source folder creation
 ======================
 Create new folders in the source (or intended source), ::
 
-  /cmake
   /build
   /vapi
 
@@ -102,16 +101,16 @@ Out of source builds
 CMake has the ability to create out-of-source builds. That is, the generated compiled files, and some cmake and system build files (such as makefiles) are placed in a separate folder. This is unlike the results of most compilers, which would put the .o files, and any whatever else, next to the original files. This might seem intuitive, but putting files in a separate folder,
 
 - Means source file folders are kept clean, and the coder doesn't need to rake through a lot of extra files to find source code to edit.
-- Removing a build to create a new one is as easy as deleting the folder.
+- Removing a build to create a new one is as easy as deleting the folder or it's contents.
 
 There are few disadvantages to out-of-source builds, and they are recommended.
 
 The /build folder is where we will keep all this data.
 
 
-The two example files
-=====================
-In /CMake_Vala, in the /docs folder, are two example cmake macro files. To prevent confusion, if they were accidentally included in a build, they have meaningless suffixes (they would be unlikely to do any damage though, if that happened). The files will need to be put in the places they are needed, and the suffixes removed.
+The example files
+=================
+In /CMake_Vala, in the /docs folder, are example cmake macro files. To prevent confusion, if they were accidentally included in a build, they have meaningless suffixes (they would be unlikely to do any damage though, if that happened). The files will need to be put in the places they are needed, and the suffixes removed.
 
 
 Activate subdirectories
@@ -135,6 +134,8 @@ and put a copy in every subdirectory with source files for the Vala build (not d
 
 Copy in the main file
 ---------------------
+There are alternatives for the main file. If the code has no need of granularity in library or binding slection, the 'automainfile' alternative uses the AutoVala module functions, which makes a cleaner, more maintainable main CMakeLists.txt file. Using either file,
+
 Rename, ::
 
   CMakeLists.txt.mainfile
@@ -164,7 +165,7 @@ The file is heavily annotated about what needs to be done. But, quickly,
 Compile!
 ========
 
-Inplace build
+In-place build
 -------------
 "I'd like the compile files next to source files" ::
 
