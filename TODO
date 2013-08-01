@@ -7,6 +7,7 @@ DONE
 TODO
 Auto detect packages :)
 Auto detect subfolders?
+Some semi-auto position for libraries bindings at least. The prepetition in the CMakeLists.txt file is a lot, and Vala autobuilds from pkg-config after all. 
 Mainfile: Link_libs/link_dirs deprecated for target specific verions.
 Maybe valac flags could be passed to valadoc?
 - Vala update reveals some errors
