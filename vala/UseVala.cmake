@@ -201,53 +201,75 @@ function(vala_precompile output)
   endforeach()
 
 
-  set(vapi_arguments "")
-  if(ARGS_GENERATE_VAPI)
-    list(APPEND out_files "${OUTPUT_DIRECTORY}/${ARGS_GENERATE_VAPI}.vapi")
-    set(vapi_arguments "--internal-vapi=${ARGS_GENERATE_VAPI}.vapi")
-    
-    # Header and internal header is needed to generate internal vapi
-    if (NOT ARGS_GENERATE_HEADER)
-      set(ARGS_GENERATE_HEADER ${ARGS_GENERATE_VAPI})
+  # Protect against no source files.
+  # CMake usually lets errors show and run, but this error causes a
+  # cascade, and the help message is uninformative if not customized.
+  list(LENGTH in_files  _in_files_length)
+  if(${_in_files_length} EQUAL 0)
+    message(WARNING "No source files supplied to UseVala. Vala preprocessing will be skipped.")
+  else()
+
+    set(vapi_arguments "")
+    if(ARGS_GENERATE_VAPI)
+      list(APPEND out_files "${OUTPUT_DIRECTORY}/${ARGS_GENERATE_VAPI}.vapi")
+      set(vapi_arguments "--internal-vapi=${ARGS_GENERATE_VAPI}.vapi")
+      
+      # Header and internal header is needed to generate internal vapi
+      if (NOT ARGS_GENERATE_HEADER)
+        set(ARGS_GENERATE_HEADER ${ARGS_GENERATE_VAPI})
+      endif()
     endif()
+
+    set(header_arguments "")
+    if(ARGS_GENERATE_HEADER)
+      list(APPEND out_files "${OUTPUT_DIRECTORY}/${ARGS_GENERATE_HEADER}.h")
+      list(APPEND out_files "${OUTPUT_DIRECTORY}/${ARGS_GENERATE_HEADER}_internal.h")
+      list(APPEND header_arguments "--header=${OUTPUT_DIRECTORY}/${ARGS_GENERATE_HEADER}.h")
+      list(APPEND header_arguments "--internal-header=${OUTPUT_DIRECTORY}/${ARGS_GENERATE_HEADER}_internal.h")
+    endif()
+
+
+    if(_Vala_Use_DEBUG)
+      message(STATUS "--------UseVala.cmake debug------------")
+      message(STATUS "Valac execute: ${VALA_EXECUTABLE} -C ${_VALA_PRECOMPILER_FLAGS} ${header_arguments} ${vapi_arguments} -b ${CMAKE_CURRENT_SOURCE_DIR} -d ${OUTPUT_DIRECTORY}  <some sources...>")
+      message(STATUS "--------------------")
+    endif()
+
+
+    # Protect against no output files.
+    # CMake usually lets errors show and run, but this potential error
+    # causes a cascade, and the help message is uninformative if not
+    # customized.
+    list(LENGTH out_files  _out_files_length)
+    if(${_out_files_length} EQUAL 0)
+      message(WARNING "No output files generated in UseVala. Vala preprocessing will be skipped.")
+    else()
+
+      # Note: the valac parameters -b and -d have a simple but effective action.
+      # -b (basedirectory) is removed from source filepaths, then -d
+      # (target directory) is appended to the remaining stub.
+      #TODO: Remove custom vapis
+      add_custom_command(OUTPUT ${out_files} 
+        COMMAND 
+        ${VALA_EXECUTABLE}
+        ARGS 
+        "-C"
+        ${_VALA_PRECOMPILER_FLAGS}
+        ${header_arguments} 
+        ${vapi_arguments}
+        "-b" ${CMAKE_CURRENT_SOURCE_DIR} 
+        "-d" ${OUTPUT_DIRECTORY}
+        ${in_files}
+        DEPENDS 
+        ${in_files} 
+        #${ARGS_CUSTOM_VAPIS}
+        )
+      set(${output} ${out_files} PARENT_SCOPE)
+
+      # outfiles failed
+    endif()
+    # infiles failed
   endif()
-
-  set(header_arguments "")
-  if(ARGS_GENERATE_HEADER)
-    list(APPEND out_files "${OUTPUT_DIRECTORY}/${ARGS_GENERATE_HEADER}.h")
-    list(APPEND out_files "${OUTPUT_DIRECTORY}/${ARGS_GENERATE_HEADER}_internal.h")
-    list(APPEND header_arguments "--header=${OUTPUT_DIRECTORY}/${ARGS_GENERATE_HEADER}.h")
-    list(APPEND header_arguments "--internal-header=${OUTPUT_DIRECTORY}/${ARGS_GENERATE_HEADER}_internal.h")
-  endif()
-
-
-  if(_Vala_Use_DEBUG)
-    message(STATUS "--------UseVala.cmake debug------------")
-    message(STATUS "Valac execute: ${VALA_EXECUTABLE} -C ${_VALA_PRECOMPILER_FLAGS} ${header_arguments} ${vapi_arguments} -b ${CMAKE_CURRENT_SOURCE_DIR} -d ${OUTPUT_DIRECTORY}  <some sources...>")
-    message(STATUS "--------------------")
-  endif()
-
-
-  # Note: the valac parameters -b and -d have a simple but effective action.
-  # -b (basedirectory) is removed from source filepaths, then -d
-  # (target directory) is appended to the remaining stub.
-#TODO: Remove custom vapis
-  add_custom_command(OUTPUT ${out_files} 
-    COMMAND 
-      ${VALA_EXECUTABLE}
-    ARGS 
-      "-C"
-      ${_VALA_PRECOMPILER_FLAGS}
-      ${header_arguments} 
-      ${vapi_arguments}
-      "-b" ${CMAKE_CURRENT_SOURCE_DIR} 
-      "-d" ${OUTPUT_DIRECTORY}
-      ${in_files}
-    DEPENDS 
-      ${in_files} 
-      #${ARGS_CUSTOM_VAPIS}
-    )
-  set(${output} ${out_files} PARENT_SCOPE)
 
 endfunction()
 
